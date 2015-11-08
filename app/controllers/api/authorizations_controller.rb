@@ -44,21 +44,25 @@ class Api::AuthorizationsController < ApplicationController
   private
 
   def require_authorization
-  	auth = Authorization.find_by(slack_user_id: params[:user_id])
+  	auth = Authorization.find_by(slack_user_id: my_params[:user_id])
 
   	if auth.nil?
   		session[:session_token] = Authorization.session_token
-  		auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
+  		auth = Authorization.new(slack_user_id: my_params[:user_id], oauth_session_token: session[:session_token])
 
   		# TODO: add model level validation
   		auth.save
 
   		# register our app with uber and a url before all these
   		# need a router for uber to make request
-  		render json: { "text": "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL" }
+  		render json: { "text" => "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL" }
   		# redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
   	else
-			render json: { "text": "Did not succeed" }
+			render json: { "text" => "Did not succeed" }
 		end
   end
+
+	def my_params
+		params.permit(:user_id)
+	end
 end
