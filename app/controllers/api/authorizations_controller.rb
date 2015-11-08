@@ -1,6 +1,6 @@
 class Api::AuthorizationsController < ApplicationController
-	before_action :require_authorization, only: :use_uber
 	before_action :verify_slack_token, except: :connect_slack
+	before_action :require_authorization, only: :use_uber
 
   def echo
     render json: slack_params
@@ -64,7 +64,7 @@ class Api::AuthorizationsController < ApplicationController
 
 	def verify_slack_token
 		unless slack_params[:token] == ENV['slack_app_token']
-			render "You're not from slack"
+			render text: "You're not from slack"
 		end
 	end
 
