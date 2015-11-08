@@ -12,5 +12,6 @@ Rails.application.routes.draw do
     post '/authorize', to: 'authorizations#authorize'
     post 'use_uber', to: 'authorizations#use_uber'
     post '/connect_uber', to: 'authorizations#connect_uber'
+    get '/connect_slack', to: 'authorization#connect_slack'
   end
 end
