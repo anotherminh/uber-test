@@ -43,8 +43,20 @@ class Api::AuthorizationsController < ApplicationController
 
 	def connect_slack
 		slack_auth_params = {
-			client_secret: 
+			client_secret: ENV['slack_client_secret'],
+			client_id: ENV['slack_client_id'],
+			redirect_uri: ENV['slack_redirect'],
+			code: my_params[:code]
 		}
+
+		resp = Net::HTTP.post_form(URI.parse('https://slack.com/api/oauth.access'), slack_auth_params)
+
+		access_token = resp['access_token']
+		#
+		# Authorization.find_by(session_token: session[:session_token])
+		# 						 .update(slack_auth_token: access_token)
+
+		render text: "slack auth success, access_token: #{access_token}"
 	end
 
   private
@@ -70,6 +82,6 @@ class Api::AuthorizationsController < ApplicationController
   end
 
 	def my_params
-		params.permit(:user_id)
+		params.permit(:user_id, :code)
 	end
 end
