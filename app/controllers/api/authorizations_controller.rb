@@ -1,8 +1,9 @@
 class Api::AuthorizationsController < ApplicationController
 	before_action :require_authorization, only: :use_uber
+	before_action :verify_slack_token, except: :connect_slack
 
   def echo
-    render json: params
+    render json: slack_params
   end
 
   def authorize
@@ -24,7 +25,7 @@ class Api::AuthorizationsController < ApplicationController
       client_id:     ENV['uber_client_id'],
       grant_type:    'authorization_code',
       # redirect_uri   ENV[''],
-      code:          params[:code]
+      code:          slack_params[:code]
     }
     # post request to uber
     resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), params)
@@ -46,7 +47,7 @@ class Api::AuthorizationsController < ApplicationController
 			client_secret: ENV['slack_client_secret'],
 			client_id: ENV['slack_client_id'],
 			redirect_uri: ENV['slack_redirect'],
-			code: my_params[:code]
+			code: slack_params[:code]
 		}
 
 		resp = Net::HTTP.post_form(URI.parse('https://slack.com/api/oauth.access'), slack_auth_params)
@@ -59,11 +60,13 @@ class Api::AuthorizationsController < ApplicationController
 		render text: "slack auth success, access_token: #{resp.body}"
 	end
 
-	def connect_slack_success
-		render text: "slack auth success (other method): #{}"
-	end
-
   private
+
+	def verify_slack_token
+		unless slack_params[:token] == ENV['slack_app_token']
+			render "You're not from slack"
+		end
+	end
 
   def require_authorization
   	auth = Authorization.find_by(slack_user_id: my_params[:user_id])
@@ -85,7 +88,7 @@ class Api::AuthorizationsController < ApplicationController
 		end
   end
 
-	def my_params
-		params.permit(:user_id, :code)
+	def slack_params
+		params.permit(:user_id, :code, :token)
 	end
 end
