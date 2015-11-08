@@ -56,7 +56,7 @@ class Api::AuthorizationsController < ApplicationController
 		# Authorization.find_by(session_token: session[:session_token])
 		# 						 .update(slack_auth_token: access_token)
 
-		render text: "slack auth success, access_token: #{resp}"
+		render text: "slack auth success, access_token: #{resp.body}"
 	end
 
 	def connect_slack_success
