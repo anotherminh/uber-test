@@ -60,7 +60,7 @@ class Api::AuthorizationsController < ApplicationController
 	end
 
 	def connect_slack_success
-		render text: "slack auth success (other method)"
+		render text: "slack auth success (other method): #{}"
 	end
 
   private
