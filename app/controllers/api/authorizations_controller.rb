@@ -59,6 +59,10 @@ class Api::AuthorizationsController < ApplicationController
 		render text: "slack auth success, access_token: #{access_token}"
 	end
 
+	def connect_slack_success
+		render text: "slack auth success (other method)"
+	end
+
   private
 
   def require_authorization
