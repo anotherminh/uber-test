@@ -63,9 +63,9 @@ class Api::AuthorizationsController < ApplicationController
   private
 
 	def verify_slack_token
-		unless slack_params[:token] == ENV['slack_app_token']
+		# unless slack_params[:token] == ENV['slack_app_token']
 			render text: "You're not from slack"
-		end
+		# end
 	end
 
   def require_authorization
