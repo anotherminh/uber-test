@@ -48,6 +48,7 @@ class Api::AuthorizationsController < ApplicationController
 
   	if auth.nil?
   		session[:session_token] = Authorization.session_token
+			debugger
   		auth = Authorization.new(slack_user_id: my_params[:user_id], oauth_session_token: session[:session_token])
 
   		# TODO: add model level validation
